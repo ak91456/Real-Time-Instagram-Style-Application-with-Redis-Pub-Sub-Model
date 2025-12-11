@@ -12,7 +12,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./Real-Time-Instagram-Style-Application-with-Redis-Pub-Sub-Model
+        working-directory: .
 
     services:
       postgres:
@@ -44,7 +44,7 @@ jobs:
         run: |
           echo "PWD:"
           pwd
-          echo "LS:"
+          echo "FILES:"
           ls -R .
 
       - name: Setup Python
