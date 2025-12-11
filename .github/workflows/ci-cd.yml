@@ -10,10 +10,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: .
-
     services:
       postgres:
         image: postgres:15
@@ -25,7 +21,7 @@ jobs:
           - 5432:5432
         options: >-
           --health-cmd="pg_isready -U admin -d instagram"
-          --health-interval=5s
+          --health-interval=10s
           --health-timeout=5s
           --health-retries=5
 
@@ -36,15 +32,14 @@ jobs:
       POSTGRES_PASSWORD: adminpassword
       POSTGRES_HOST: localhost
       POSTGRES_PORT: 5432
+      PYTHONUNBUFFERED: 1
 
     steps:
       - uses: actions/checkout@v3
 
       - name: Confirm working directory
         run: |
-          echo "PWD:"
           pwd
-          echo "FILES:"
           ls -R .
 
       - name: Setup Python
@@ -53,9 +48,15 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Wait for PostgreSQL
         run: |
-          pip install --upgrade pip
-          pip install -r requirements.txt
+          for i in {1..10}; do
+            pg_isready -h localhost -p 5432 -U admin && break
+            echo "Postgres not ready yet..."
+            sleep 2
+          done
 
       - name: Run migrations
         run: python manage.py migrate --noinput
