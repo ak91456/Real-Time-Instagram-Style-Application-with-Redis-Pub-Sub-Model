@@ -10,9 +10,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: Real-Time-Instagram-Style-Application-with-Redis-Pub-Sub-Model
+    # ⚠️ Remove or fix this later — after we see real folder structure
+    # defaults:
+    #   run:
+    #     working-directory: Real-Time-Instagram-Style-Application-with-Redis-Pub-Sub-Model
 
     services:
       postgres:
@@ -39,6 +40,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
+      # ⭐ TEMPORARY DEBUG STEP — Shows exact folder structure
+      - name: Debug folder structure
+        run: |
+          echo "== Current Directory =="
+          pwd
+          echo "== Directory Tree =="
+          ls -R .
 
       - name: Setup Python
         uses: actions/setup-python@v4
