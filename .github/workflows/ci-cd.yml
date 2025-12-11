@@ -1,38 +1,59 @@
-name: CI / CD
+name: Django CI
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main", "master" ]
+    branches: [ "main" ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     services:
-      redis:
-        image: redis:7
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: instagram
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: adminpassword
         ports:
-          - 6379:6379
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U admin -d instagram"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      GITHUB_ACTIONS: "true"
+      POSTGRES_DB: instagram
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpassword
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
           python-version: "3.12"
 
       - name: Install dependencies
         run: |
+          pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run migrations
+      - name: Wait for Postgres
         run: |
-          python manage.py migrate --noinput
+          until pg_isready -h localhost -p 5432 -U admin; do
+            echo "Waiting for Postgres..."
+            sleep 2
+          done
+
+      - name: Run migrations
+        run: python manage.py migrate --noinput
 
       - name: Run tests
-        run: |
-          pytest -q
+        run: pytest
