@@ -27,17 +27,20 @@ jobs:
 
     env:
       DJANGO_SETTINGS_MODULE: instagram_clone.settings
+      PYTHONPATH: ${{ github.workspace }}/Real-Time-Instagram-Style-Application-with-Redis-Pub-Sub-Model
       POSTGRES_DB: instagram
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: adminpassword
       POSTGRES_HOST: localhost
       POSTGRES_PORT: 5432
+      PYTHONUNBUFFERED: 1
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Print directory structure
+      - name: Debug folder structure
         run: |
+          echo "GITHUB_WORKSPACE = ${{ github.workspace }}"
           pwd
           ls -R .
 
@@ -46,7 +49,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install requirements
+      - name: Install dependencies
         run: pip install -r requirements.txt
 
       - name: Run migrations
