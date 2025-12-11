@@ -26,6 +26,7 @@ jobs:
           --health-retries=5
 
     env:
+      DJANGO_SETTINGS_MODULE: instagram_clone.settings   # ✔ FIX FOR YOUR ERROR
       POSTGRES_DB: instagram
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: adminpassword
@@ -34,13 +35,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
-      - name: Print directory info
-        run: |
-          echo "PWD:"
-          pwd
-          echo "LIST:"
-          ls -la
 
       - name: Setup Python
         uses: actions/setup-python@v4
