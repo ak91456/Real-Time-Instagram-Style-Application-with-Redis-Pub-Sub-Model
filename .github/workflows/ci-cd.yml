@@ -10,11 +10,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    # ✅ Your project is located ONE LEVEL DEEP
-    defaults:
-      run:
-        working-directory: Real-Time-Instagram-Style-Application-with-Redis-Pub-Sub-Model
-
     services:
       postgres:
         image: postgres:15
@@ -40,7 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Show directory (TEMP)
+      - name: Print directory info
         run: |
           echo "PWD:"
           pwd
@@ -50,4 +45,15 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run migrations
+        run: python manage.py migrate --noinput
+
+      - name: Run tests
+        run: pytest -q
