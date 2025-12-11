@@ -10,10 +10,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: Real-Time-Instagram-Style-Application-with-Redis-Pub-Sub-Model
-
     services:
       postgres:
         image: postgres:15
@@ -40,7 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.12"
