@@ -1,18 +1,64 @@
+version: "3.9"
+
 services:
+
   web:
     build: .
     container_name: instaclone-web
     command: >
-      sh -c "python manage.py migrate &&
-             daphne -b 0.0.0.0 -p 8000 instagram.asgi:application"
+      sh -c "
+      python manage.py migrate &&
+      daphne -b 0.0.0.0 -p 8000 instagram_clone.asgi:application
+      "
     ports:
       - "8000:8000"
     volumes:
       - .:/app
     depends_on:
       - redis
+      - db
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      POSTGRES_DB: instagram
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpassword
+      POSTGRES_HOST: db
+
+  worker:
+    build: .
+    container_name: instaclone-worker
+    command: python manage.py runworker default
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - db
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      POSTGRES_DB: instagram
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpassword
+      POSTGRES_HOST: db
 
   redis:
     image: redis:7
+    container_name: instaclone-redis
     ports:
       - "6379:6379"
+
+  db:
+    image: postgres:15
+    container_name: instaclone-db
+    environment:
+      POSTGRES_DB: instagram
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:

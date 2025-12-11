@@ -5,3 +5,5 @@ channels
 channels-redis
 Pillow
 pytest
+daphne
+psycopg2-binary
