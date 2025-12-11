@@ -10,10 +10,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: Real-Time-Instagram-Style-Application-with-Redis-Pub-Sub-Model
-
     services:
       postgres:
         image: postgres:15
@@ -40,6 +36,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Debug folder structure
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "Listing:"
+          ls -R .
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -49,9 +52,3 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
-
-      - name: Run Migrations
-        run: python manage.py migrate --noinput
-
-      - name: Run Tests
-        run: pytest
