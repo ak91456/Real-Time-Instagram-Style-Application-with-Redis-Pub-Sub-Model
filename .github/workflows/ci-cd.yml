@@ -10,6 +10,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ./Real-Time-Instagram-Style-Application-with-Redis-Pub-Sub-Model
+
     services:
       postgres:
         image: postgres:15
@@ -26,7 +30,7 @@ jobs:
           --health-retries=5
 
     env:
-      DJANGO_SETTINGS_MODULE: instagram_clone.settings   # ✔ FIX FOR YOUR ERROR
+      DJANGO_SETTINGS_MODULE: instagram_clone.settings
       POSTGRES_DB: instagram
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: adminpassword
@@ -35,6 +39,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Confirm working directory
+        run: |
+          echo "PWD:"
+          pwd
+          echo "LS:"
+          ls -R .
 
       - name: Setup Python
         uses: actions/setup-python@v4
